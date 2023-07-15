@@ -1,6 +1,6 @@
 import { prisma } from "./database.js";
 
-const deleteItem = async (event) => {
+const handler = async (event) => {
   const item = JSON.parse(event.body);
 
   const result = await prisma.employee.delete({
@@ -13,4 +13,4 @@ const deleteItem = async (event) => {
   };
 };
 
-export { deleteItem };
+export { handler };

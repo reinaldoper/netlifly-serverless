@@ -1,6 +1,6 @@
 import { prisma } from "./database.js";
 
-const updateItem = async (event) => {
+const handler = async (event) => {
   const { leaderEmail, id } = JSON.parse(event.body);
 
   const createdItem = await prisma.employee.update({
@@ -14,4 +14,4 @@ const updateItem = async (event) => {
   };
 };
 
-export { updateItem };
+export { handler };

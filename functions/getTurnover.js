@@ -1,7 +1,7 @@
 import { prisma } from "./database.js";
 import { calcularTurnoverEHeadcount } from "./calcularTurnoverEHeadcount.js";
 
-const getTurnover = async (event) => {
+const handler = async (event) => {
   const { email } = JSON.parse(event.body);
   const verification = await prisma.employee.findUnique({
     where: { email: email},
@@ -56,4 +56,4 @@ const getTurnover = async (event) => {
   }
 };
 
-export { getTurnover };
+export { handler };

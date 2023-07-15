@@ -1,7 +1,7 @@
 // src/getItems.js
 import { prisma } from "./database.js";
 
-const getItems = async (event) => {
+const handler = async (event) => {
   const items = await prisma.employee.findMany();
   return {
     statusCode: 201,
@@ -9,6 +9,6 @@ const getItems = async (event) => {
   };
 };
 
-export { getItems };
+export { handler };
 
 

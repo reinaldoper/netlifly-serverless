@@ -1,6 +1,6 @@
 import { prisma } from "./database.js";
 
-const createItem = async (event) => {
+const handler = async (event) => {
   const item = JSON.parse(event.body);
 
   const createdItem = await prisma.employee.create({
@@ -13,4 +13,4 @@ const createItem = async (event) => {
   };
 };
 
-export { createItem };
+export { handler };
