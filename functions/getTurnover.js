@@ -18,6 +18,7 @@ const handler = async (event) => {
     const employees = await prisma.employee.findMany();
     const headcounts = [];
     
+    const currentDate = new Date();
     // Iterar por cada mês
     for (let month = 1; month <= 12; month++) {
       const firstDayOfMonth = new Date(currentDate.getFullYear(), month - 1, 1);
