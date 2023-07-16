@@ -14,53 +14,53 @@ const handler = async (event) => {
   }
 
   try {
-    const gestorAtualEmail = email; 
-
+    const gestorAtual = { email: email };
     const employees = await prisma.employee.findMany();
     const headcounts = [];
 
-    const monthsWithRecords = new Set();
+    const currentDate = new Date(); 
+    const promises = [];
 
-    employees.forEach(employee => {
-      if (employee.leaderEmail === gestorAtualEmail || employee.email === gestorAtualEmail) {
-        const hireDate = new Date(employee.hireDate);
-        const month = hireDate.getMonth() + 1; 
-        monthsWithRecords.add(month);
-      }
-    });
-    const currentDate = new Date();
-
-    for (const month of monthsWithRecords) {
+    for (let month = 1; month <= 12; month++) {
       const firstDayOfMonth = new Date(currentDate.getFullYear(), month - 1, 1);
       const lastDayOfMonth = new Date(currentDate.getFullYear(), month, 0);
 
-      const employeesCountFirstDay = await prisma.employee.count({
-        where: {
-          OR: [
-            { leaderEmail: gestorAtualEmail },
-            { email: gestorAtualEmail }
-          ],
-          hireDate: { lte: firstDayOfMonth.toISOString().split('T')[0] },
-          terminationDate: { lte: lastDayOfMonth.toISOString().split('T')[0] }
-        },
-      });
+      promises.push(
+        prisma.employee.count({
+          where: {
+            OR: [
+              { leaderEmail: gestorAtual.email },
+              { email: gestorAtual.email }
+            ],
+            hireDate: { lte: firstDayOfMonth.toISOString() },
+            terminationDate: { lte: lastDayOfMonth.toISOString() }
+          },
+        }),
+        prisma.employee.count({
+          where: {
+            OR: [
+              { leaderEmail: gestorAtual.email },
+              { email: gestorAtual.email }
+            ],
+            hireDate: { lte: lastDayOfMonth.toISOString() },
+            terminationDate: null,
+          },
+        })
+      );
+    }
 
-      const headcountes = await prisma.employee.count({
-        where: {
-          OR: [
-            { leaderEmail: gestorAtualEmail },
-            { email: gestorAtualEmail }
-          ],
-          hireDate: { lte: lastDayOfMonth.toISOString().split('T')[0] },
-          terminationDate: null,
-        },
-      });
+    const results = await Promise.all(promises);
 
-      const { turnover, headcountTotal } = calcularTurnoverEHeadcount(gestorAtualEmail, employeesCountFirstDay, headcountes, employees);
+    for (let i = 0; i < results.length; i += 2) {
+      const employeesCountFirstDay = results[i];
+      const headcountes = results[i + 1];
+
+      const { turnover, headcountTotal } = calcularTurnoverEHeadcount(gestorAtual, employeesCountFirstDay, headcountes, employees);
+
+      const month = i / 2 + 1; 
 
       headcounts.push({ month, turnover, headcountTotal });
     }
-
     return {
       statusCode: 200,
       headers: {
