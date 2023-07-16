@@ -1,6 +1,6 @@
 import { prisma } from "./database.js";
 import { calcularTurnoverEHeadcount } from "./calcularTurnoverEHeadcount.js";
-import cors from 'cors';
+const cors = require("cors");
 const corsOptions = {
   origin: '*', 
   methods: ['GET', 'POST', 'PUT', 'DELETE'], 

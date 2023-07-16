@@ -1,6 +1,6 @@
 // src/getItems.js
 import { prisma } from "./database.js";
-import cors from 'cors';
+const cors = require("cors");
 const corsOptions = {
   origin: '*', 
   methods: ['GET', 'POST', 'PUT', 'DELETE'], 
