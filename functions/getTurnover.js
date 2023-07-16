@@ -28,6 +28,7 @@ const handler = async (event) => {
         monthsWithRecords.add(month);
       }
     });
+    const currentDate = new Date();
 
     for (const month of monthsWithRecords) {
       const firstDayOfMonth = new Date(currentDate.getFullYear(), month - 1, 1);
