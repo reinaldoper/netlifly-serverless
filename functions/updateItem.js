@@ -15,4 +15,6 @@ const handler = async (event) => {
   };
 };
 
-module.exports.handler = cors()(handler);
+const corsHandler = cors()(handler);
+
+export { corsHandler as handler };;
