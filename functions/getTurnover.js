@@ -14,7 +14,7 @@ const handler = async (event) => {
   }
   
   try {
-    const gestorAtual = { email }; 
+    const gestorAtual = { email: email }; 
     const employees = await prisma.employee.findMany();
     const headcounts = [];
     
