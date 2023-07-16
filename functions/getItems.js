@@ -1,7 +1,7 @@
 import { prisma } from "./database.js";
 
 const handler = async (event) => {
-  if (event.httpMethod === 'OPTIONS') {
+  if (event.httpMethod === 'GET') {
     // Resposta de preflight para o método OPTIONS
     return {
       statusCode: 200,
