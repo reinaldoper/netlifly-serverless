@@ -7,7 +7,7 @@ const handler = async (event) => {
   return {
     statusCode: 200,
     headers: {
-      "Access-Control-Allow-Origin": "https://master--creative-alpaca-c36ba7.netlify.app"
+      "Access-Control-Allow-Origin": "http://localhost:3000"
     },
     body: JSON.stringify(items),
   };
