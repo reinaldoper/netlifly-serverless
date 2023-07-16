@@ -5,7 +5,7 @@ const calcularTurnoverEHeadcount = (gestorAtual, employeesCountFirstDay, headcou
   const turnover = (lideradosDiretos.length + lideradosIndiretos.length) > 0 ? (employeesCountFirstDay / (headcount + employeesCountFirstDay)) * 100 : 0;
   const headcountTotal = lideradosDiretos.length + lideradosIndiretos.length;
 
-  return { turnover, headcounts: headcountTotal };
+  return { turnover, headcountTotal };
 }
 
 const  getLideradosIndiretos = (gestor, employees) => {

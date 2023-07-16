@@ -1,55 +1,54 @@
 import { prisma } from "./database.js";
 import { calcularTurnoverEHeadcount } from "./calcularTurnoverEHeadcount.js";
-/* const cors = require("cors"); */
 
 const handler = async (event) => {
   const { email } = JSON.parse(event.body);
   const verification = await prisma.employee.findUnique({
-    where: { email: email},
+    where: { email: email },
   });
   if (!verification){
     return {
       statusCode: 404,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ error: " Emails is not exists!" }),
+      body: JSON.stringify({ error: "Email does not exist!" }),
     };
   }
+  
   try {
     const gestorAtual = { email }; 
-    const currentDate = new Date();
-    const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-
-    const employeesCountFirstDay = await prisma.employee.count({
-      where: {
-        OR: [
-          { leaderEmail: gestorAtual.email }, 
-          { email: gestorAtual.email } 
-        ],
-        hireDate: { lte: firstDayOfMonth.toISOString().split('T')[0] },
-        terminationDate: { lte: lastDayOfMonth.toISOString().split('T')[0] }
-      },
-    });
-    
-    const headcount = await prisma.employee.count({
-      where: {
-        OR: [
-          { leaderEmail: gestorAtual.email },
-          { email: gestorAtual.email } 
-        ],
-        hireDate: { lte: lastDayOfMonth.toISOString().split('T')[0] },
-        terminationDate: null,
-      },
-    });
-
     const employees = await prisma.employee.findMany();
-    const { turnover } = calcularTurnoverEHeadcount(gestorAtual, employeesCountFirstDay, headcount, employees);
+    const headcounts = [];
+    
+    // Iterar por cada mês
+    for (let month = 1; month <= 12; month++) {
+      const firstDayOfMonth = new Date(currentDate.getFullYear(), month - 1, 1);
+      const lastDayOfMonth = new Date(currentDate.getFullYear(), month, 0);
 
+      const employeesCountFirstDay = await prisma.employee.count({
+        where: {
+          OR: [
+            { leaderEmail: gestorAtual.email }, 
+            { email: gestorAtual.email } 
+          ],
+          hireDate: { lte: firstDayOfMonth.toISOString().split('T')[0] },
+          terminationDate: { lte: lastDayOfMonth.toISOString().split('T')[0] }
+        },
+      });
+      
+      const headcountes = await prisma.employee.count({
+        where: {
+          OR: [
+            { leaderEmail: gestorAtual.email },
+            { email: gestorAtual.email } 
+          ],
+          hireDate: { lte: lastDayOfMonth.toISOString().split('T')[0] },
+          terminationDate: null,
+        },
+      });
+
+      const { turnover, headcountTotal } = calcularTurnoverEHeadcount(gestorAtual, employeesCountFirstDay, headcountes, employees);
+
+      headcounts.push({ month, turnover, headcountTotal });
+    }
 
     return {
       statusCode: 200,
@@ -59,7 +58,7 @@ const handler = async (event) => {
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(turnover),
+      body: JSON.stringify(headcounts),
     };
   } catch (error) {
     return {
