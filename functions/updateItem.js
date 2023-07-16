@@ -1,4 +1,5 @@
 import { prisma } from "./database.js";
+const cors = require('cors');
 
 const handler = async (event) => {
   const { leaderEmail, id } = JSON.parse(event.body);
@@ -14,4 +15,4 @@ const handler = async (event) => {
   };
 };
 
-export { handler };
+module.exports.handler = cors()(handler);

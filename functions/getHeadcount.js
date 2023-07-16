@@ -1,5 +1,6 @@
 import { prisma } from "./database.js";
 import { calcularTurnoverEHeadcount } from "./calcularTurnoverEHeadcount.js";
+const cors = require('cors');
 
 const handler = async (event) => {
   const { email } = JSON.parse(event.body);
@@ -57,4 +58,4 @@ const handler = async (event) => {
 };
 
 
-export { handler };
+module.exports.handler = cors()(handler);

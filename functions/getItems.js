@@ -1,5 +1,6 @@
 // src/getItems.js
 import { prisma } from "./database.js";
+const cors = require('cors');
 
 const handler = async (event) => {
   const items = await prisma.employee.findMany();
@@ -9,6 +10,6 @@ const handler = async (event) => {
   };
 };
 
-export { handler };
+module.exports.handler = cors()(handler);
 
 
