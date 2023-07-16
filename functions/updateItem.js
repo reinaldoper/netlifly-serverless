@@ -11,6 +11,10 @@ const handler = async (event) => {
 
   return {
     statusCode: 201,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
     body: JSON.stringify(createdItem),
   };
 };
