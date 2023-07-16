@@ -10,6 +10,12 @@ const handler = async (event) => {
   if (!verification){
     return {
       statusCode: 404,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({ error: " Emails is not exists!" }),
     };
   }
