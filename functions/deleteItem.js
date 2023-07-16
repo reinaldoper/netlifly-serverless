@@ -14,6 +14,7 @@ const handler = async (event) => {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Headers": "Content-Type",
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+      "Access-Control-Max-Age": "5173"
     },
     body: JSON.stringify(result),
   };
