@@ -1,6 +1,6 @@
 // src/getItems.js
 import { prisma } from "./database.js";
-const cors = require('cors');
+import cors from 'cors';
 
 const handler = async (event) => {
   const items = await prisma.employee.findMany();

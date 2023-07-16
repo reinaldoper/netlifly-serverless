@@ -1,5 +1,5 @@
 import { prisma } from "./database.js";
-const cors = require('cors');
+import cors from 'cors';
 
 const handler = async (event) => {
   const { leaderEmail, id } = JSON.parse(event.body);

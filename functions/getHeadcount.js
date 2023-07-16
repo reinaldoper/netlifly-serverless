@@ -1,6 +1,6 @@
 import { prisma } from "./database.js";
 import { calcularTurnoverEHeadcount } from "./calcularTurnoverEHeadcount.js";
-const cors = require('cors');
+import cors from 'cors';
 
 const handler = async (event) => {
   const { email } = JSON.parse(event.body);
