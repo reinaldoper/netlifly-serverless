@@ -19,7 +19,6 @@ const handler = async (event) => {
     const employees = await prisma.employee.findMany();
     const headcounts = [];
 
-    // Extrair os meses com base na data de contratação (hireDate)
     const monthsWithRecords = new Set();
 
     employees.forEach(employee => {
@@ -30,8 +29,7 @@ const handler = async (event) => {
       }
     });
 
-    // Iterar apenas pelos meses com registros disponíveis
-    monthsWithRecords.forEach(async month => {
+    for (const month of monthsWithRecords) {
       const firstDayOfMonth = new Date(currentDate.getFullYear(), month - 1, 1);
       const lastDayOfMonth = new Date(currentDate.getFullYear(), month, 0);
 
@@ -60,30 +58,30 @@ const handler = async (event) => {
       const { turnover, headcountTotal } = calcularTurnoverEHeadcount(gestorAtualEmail, employeesCountFirstDay, headcountes, employees);
 
       headcounts.push({ month, turnover, headcountTotal });
-    });
+    }
 
     return {
-    statusCode: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(headcounts),
-  };
-} catch (error) {
-  return {
-    statusCode: 500,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ error: error.message }),
-  };
-}
+      statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(headcounts),
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ error: error.message }),
+    };
+  }
 };
 
 export { handler };
