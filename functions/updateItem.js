@@ -16,7 +16,7 @@ const handler = async (event) => {
 };
 
 const corsHandler = cors()(handler);
-
+// error handler
 module.exports.handler = async (event, context) => {
   return await corsHandler(event, context);
 };
