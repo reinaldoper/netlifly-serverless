@@ -5,12 +5,9 @@ import { prisma } from "./database.js";
 const handler = async (event) => {
   const items = await prisma.employee.findMany();
   return {
-    statusCode: 201,
+    statusCode: 200,
     headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
-      "Content-Type": "application/json"
+      "Access-Control-Allow-Origin": "https://master--creative-alpaca-c36ba7.netlify.app"
     },
     body: JSON.stringify(items),
   };
