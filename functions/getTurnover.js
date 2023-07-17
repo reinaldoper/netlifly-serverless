@@ -45,7 +45,7 @@ const handler = async (event) => {
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(headcounts, turnovers),
+      body: JSON.stringify([headcounts, turnovers]),
     };
   } catch (error) {
     return {
