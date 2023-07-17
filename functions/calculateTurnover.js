@@ -1,6 +1,6 @@
 import { isBetweenDates } from "./isBetweenDates";
 
-const calculateTurnover = (gestorAtual, employees, startDate, endDate) => {
+const calculateTurnover = (gestorAtual, startDate, endDate, employees) => {
   // Filtrar os funcionários com o mesmo email do gestor atual
   const filteredEmployees = employees.filter(employee => employee.leaderEmail === gestorAtual.email);
 
