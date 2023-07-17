@@ -1,5 +1,6 @@
+import { isBetweenDates } from "./isBetweenDates";
 
-const calculateTurnover = (gestorAtual, firstDayOfMonth, lastDayOfMonth) => {
+const calculateTurnover = (gestorAtual, firstDayOfMonth, lastDayOfMonth, employees) => {
   // Filtrar os funcionários liderados diretamente pelo gestor atual
   const lideradosDiretos = employees.filter(employee => employee.leaderEmail === gestorAtual.email);
 

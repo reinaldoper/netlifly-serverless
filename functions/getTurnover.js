@@ -31,7 +31,7 @@ const handler = async (event) => {
       }).length;
 
       // Calcular o turnover para o mês atual
-      const turnover = calculateTurnover(gestorAtual, firstDayOfMonth, lastDayOfMonth);
+      const turnover = calculateTurnover(gestorAtual, firstDayOfMonth, lastDayOfMonth, employees);
 
       // Adicionar os valores ao array de headcounts e turnovers
       headcounts.push({ month, headcount });
