@@ -1,24 +1,25 @@
 import { isBetweenDates } from "./isBetweenDates";
 
-const calculateTurnover = (gestorAtual, firstDayOfMonth, lastDayOfMonth, employees) => {
-  // Filtrar os funcionários liderados diretamente pelo gestor atual
-  const lideradosDiretos = employees.filter(employee => employee.leaderEmail === gestorAtual.email);
+const calculateTurnover = (gestorAtual, employees, startDate, endDate) => {
+  // Filtrar os funcionários com o mesmo email do gestor atual
+  const filteredEmployees = employees.filter(employee => employee.leaderEmail === gestorAtual.email);
 
-  // Filtrar os funcionários liderados indiretamente pelo gestor atual
-  const lideradosIndiretos = employees.filter(employee => lideradosDiretos.includes(employee.leaderEmail));
+  // Contar o número total de funcionários
+  const totalEmployees = filteredEmployees.length;
 
-  // Filtrar os funcionários contratados no período
-  const employeesHired = employees.filter(employee =>
-    isBetweenDates(employee.hireDate, firstDayOfMonth, lastDayOfMonth)
+  // Filtrar os funcionários contratados ou demitidos dentro do período desejado
+  const employeesHired = filteredEmployees.filter(employee =>
+    isBetweenDates(employee.hireDate, startDate, endDate)
+  );
+  const employeesTerminated = filteredEmployees.filter(employee =>
+    employee.terminationDate && isBetweenDates(employee.terminationDate, startDate, endDate)
   );
 
-  // Filtrar os funcionários que encerraram o contrato no período
-  const employeesTerminated = employees.filter(employee =>
-    isBetweenDates(employee.terminationDate, firstDayOfMonth, lastDayOfMonth)
-  );
+  // Contar o número de admissões e demissões
+  const totalTerminated = employeesTerminated.length;
 
-  // Calcular o turnover considerando os funcionários contratados e encerrados no período
-  const turnover = (employeesTerminated.length / employeesHired.length) * 100;
+  // Calcular o turnover
+  const turnover = (totalTerminated / totalEmployees) * 100;
 
   return turnover;
 };

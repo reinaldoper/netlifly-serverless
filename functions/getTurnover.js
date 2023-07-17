@@ -10,6 +10,12 @@ const handler = async (event) => {
   if (!gestorAtual) {
     return {
       statusCode: 404,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({ error: "O e-mail do gestor atual não foi encontrado." }),
     };
   }
@@ -26,8 +32,11 @@ const handler = async (event) => {
 
       // Calcular o headcount para o mês atual
       const headcount = employees.filter(employee => {
-        return isBetweenDates(employee.hireDate, firstDayOfMonth, lastDayOfMonth) &&
-          (employee.leaderEmail === gestorAtual.email || employee.email === gestorAtual.email);
+        return (
+          isBetweenDates(employee.hireDate, firstDayOfMonth, lastDayOfMonth) &&
+          (employee.leaderEmail === gestorAtual.email || employee.email === gestorAtual.email) &&
+          employee.status === "ativo"
+        );
       }).length;
 
       // Calcular o turnover para o mês atual
