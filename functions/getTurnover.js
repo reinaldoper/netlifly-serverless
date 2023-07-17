@@ -1,6 +1,6 @@
 import { prisma } from "./database.js";
-import { calculateTurnover } from "./calculateTurnover.js";
-import { isBetweenDates } from "./isBetweenDates.js";
+import { calcularHeadcount } from "./calcularHeadcount.js";
+import { calcularTurnover } from "./calcularTurnover.js";
 
 
 const handler = async (event) => {
@@ -21,31 +21,25 @@ const handler = async (event) => {
   }
 
   try {
-    const currentDate = new Date();
-    const headcounts = [];
-    const turnovers = [];
+    const gestorAtual = { email: email };
+    const result = await prisma.employee.findMany();
+    const employee = result.filter(employee => employee.leaderEmail === gestorAtual.email);
+    const inside = employee.filter(employee => employee.status === "ativo");
+    const outside = employee.filter(employee => employee.status === "inativo");
+    const total = inside.length + outside.length
 
-    // Iterar por cada mês
-    for (let month = 1; month <= 12; month++) {
-      const firstDayOfMonth = new Date(currentDate.getFullYear(), month - 1, 1);
-      const lastDayOfMonth = new Date(currentDate.getFullYear(), month, 0);
+    const ativos = [];
+    inside.filter((data) => {
+      ativos.push(data.hireDate);
+    });
 
-      // Calcular o headcount para o mês atual
-      const headcount = employees.filter(employee => {
-        return (
-          isBetweenDates(employee.hireDate, firstDayOfMonth, lastDayOfMonth) &&
-          (employee.leaderEmail === gestorAtual.email || employee.email === gestorAtual.email) &&
-          employee.status === "ativo"
-        );
-      }).length;
+    const inativos = [];
 
-      // Calcular o turnover para o mês atual
-      const turnover = calculateTurnover(gestorAtual, firstDayOfMonth, lastDayOfMonth, employees);
-
-      // Adicionar os valores ao array de headcounts e turnovers
-      headcounts.push({ month, headcount });
-      turnovers.push({ month, turnover });
-    }
+    outside.filter((data) => {
+      inativos.push(data.terminationDate);
+    });
+    const turnover = calcularTurnover(ativos, inativos, total);
+    const head = calcularHeadcount(ativos, inativos, total);
     return {
       statusCode: 200,
       headers: {
@@ -54,7 +48,7 @@ const handler = async (event) => {
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
         "Content-Type": "application/json"
       },
-      body: JSON.stringify([headcounts, turnovers]),
+      body: JSON.stringify({data: [employee, { turnoverMesAmes: turnover }, { headMesAmes: head }, total]}),
     };
   } catch (error) {
     return {
