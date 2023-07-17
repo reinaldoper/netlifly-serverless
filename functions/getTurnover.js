@@ -1,65 +1,41 @@
 import { prisma } from "./database.js";
-import { calcularTurnoverEHeadcount } from "./calcularTurnoverEHeadcount.js";
+import { calculateTurnover } from "./calculateTurnover.js";
+import { isBetweenDates } from "./isBetweenDates.js";
+
 
 const handler = async (event) => {
   const { email } = JSON.parse(event.body);
-  const verification = await prisma.employee.findUnique({
-    where: { email: email },
-  });
-  if (!verification) {
+  const employees = await prisma.employee.findMany();
+  const gestorAtual = employees.find(employee => employee.email === email);
+  if (!gestorAtual) {
     return {
       statusCode: 404,
-      body: JSON.stringify({ error: "Email does not exist!" }),
+      body: JSON.stringify({ error: "O e-mail do gestor atual não foi encontrado." }),
     };
   }
 
   try {
-    const gestorAtual = { email: email };
-    const employees = await prisma.employee.findMany();
+    const currentDate = new Date();
     const headcounts = [];
+    const turnovers = [];
 
-    const currentDate = new Date(); 
-    const promises = [];
-
+    // Iterar por cada mês
     for (let month = 1; month <= 12; month++) {
       const firstDayOfMonth = new Date(currentDate.getFullYear(), month - 1, 1);
       const lastDayOfMonth = new Date(currentDate.getFullYear(), month, 0);
 
-      promises.push(
-        prisma.employee.count({
-          where: {
-            OR: [
-              { leaderEmail: gestorAtual.email },
-              { email: gestorAtual.email }
-            ],
-            hireDate: { lte: firstDayOfMonth.toISOString() },
-            terminationDate: { lte: lastDayOfMonth.toISOString() }
-          },
-        }),
-        prisma.employee.count({
-          where: {
-            OR: [
-              { leaderEmail: gestorAtual.email },
-              { email: gestorAtual.email }
-            ],
-            hireDate: { lte: lastDayOfMonth.toISOString() },
-            terminationDate: null,
-          },
-        })
-      );
-    }
+      // Calcular o headcount para o mês atual
+      const headcount = employees.filter(employee => {
+        return isBetweenDates(employee.hireDate, firstDayOfMonth, lastDayOfMonth) &&
+          (employee.leaderEmail === gestorAtual.email || employee.email === gestorAtual.email);
+      }).length;
 
-    const results = await Promise.all(promises);
+      // Calcular o turnover para o mês atual
+      const turnover = calculateTurnover(gestorAtual, firstDayOfMonth, lastDayOfMonth);
 
-    for (let i = 0; i < results.length; i += 2) {
-      const employeesCountFirstDay = results[i];
-      const headcountes = results[i + 1];
-
-      const { turnover, headcountTotal } = calcularTurnoverEHeadcount(gestorAtual, employeesCountFirstDay, headcountes, employees);
-
-      const month = i / 2 + 1; 
-
-      headcounts.push({ month, turnover, headcountTotal });
+      // Adicionar os valores ao array de headcounts e turnovers
+      headcounts.push({ month, headcount });
+      turnovers.push({ month, turnover });
     }
     return {
       statusCode: 200,
@@ -69,7 +45,7 @@ const handler = async (event) => {
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(headcounts),
+      body: JSON.stringify(headcounts, turnovers),
     };
   } catch (error) {
     return {
