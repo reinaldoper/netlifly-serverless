@@ -3,7 +3,7 @@ import { prisma } from "./database.js";
 const handler = async (event) => {
   try {
     const employees = await prisma.employee.findMany();
-    const date = employees.find(employee => employee.hireDate);
+    const date = employees.filter(employee => employee.hireDate);
 
     return {
       statusCode: 200,
