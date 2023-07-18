@@ -13,6 +13,8 @@ const calcularTurnover = (datasAtivos, datasInativos, totalFuncionarios) => {
     });
   }
 
+  turnovers.sort((a, b) => new Date(a.data) - new Date(b.data));
+
   return turnovers;
 };
 

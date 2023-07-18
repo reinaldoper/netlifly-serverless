@@ -36,7 +36,19 @@ const calcularHeadcount = (datasAtivos, datasInativos, totalFuncionarios) => {
     }
   }
 
+  headcount.sort((a, b) => {
+    const [mesA, anoA] = a.data.split('/');
+    const [mesB, anoB] = b.data.split('/');
+
+    if (anoA === anoB) {
+      return parseInt(mesA) - parseInt(mesB);
+    } else {
+      return parseInt(anoA) - parseInt(anoB);
+    }
+  });
+
   return headcount;
 };
+
 
 export { calcularHeadcount }
