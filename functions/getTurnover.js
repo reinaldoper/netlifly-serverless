@@ -5,9 +5,10 @@ import { calcularTurnover } from "./calcularTurnover.js";
 
 const handler = async (event) => {
   const { email } = JSON.parse(event.body);
-  const employees = await prisma.employee.findMany();
-  const gestorAtual = employees.find(employee => employee.email === email);
-  if (!gestorAtual) {
+  const verification = await prisma.employee.findUnique({
+    where: { email: email },
+  });
+  if (!verification) {
     return {
       statusCode: 404,
       headers: {
@@ -48,7 +49,7 @@ const handler = async (event) => {
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({data: [employee, { turnoverMesAmes: turnover }, { headMesAmes: head }, total]}),
+      body: JSON.stringify({data: [employee, [{ turnoverMesAmes: turnover }],  [{headMesAmes: head} ], total]}),
     };
   } catch (error) {
     return {
