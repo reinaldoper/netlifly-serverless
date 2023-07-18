@@ -39,6 +39,10 @@ const handler = async (event) => {
     outside.filter((data) => {
       inativos.push(data.terminationDate);
     });
+
+    const datasCompletas = [...ativos, ...inativos];
+    const datasUnicas = [...new Set(datasCompletas)];
+
     const turnover = calcularTurnover(ativos, inativos, total);
     const head = calcularHeadcount(ativos, inativos, total);
     return {
@@ -49,7 +53,7 @@ const handler = async (event) => {
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({data: [employee, [{ turnoverMesAmes: turnover }],  [{headMesAmes: head} ], total]}),
+      body: JSON.stringify({ data: [[{ turnoverMesAmes: turnover }], [{ headMesAmes: head }], [{datas: datasUnicas}]] }),
     };
   } catch (error) {
     return {
