@@ -7,10 +7,13 @@ const calcularTurnover = (datasAtivos, datasInativos, totalFuncionarios) => {
     const inativosMes = datasInativos.filter(data => data.split('/')[1] === mes).length;
 
     const turnover = inativosMes / ((ativosMes + totalFuncionarios) / 2);
-    turnovers.push(turnover);
+    turnovers.push({
+      turnover,
+      data: mes
+    });
   }
 
   return turnovers;
-}
+};
 
 export { calcularTurnover };

@@ -3,7 +3,7 @@ const calcularHeadcount = (datasAtivos, datasInativos, totalFuncionarios) => {
   const datasUnicas = [...new Set(datasCompletas)];
 
   const headcount = [];
-  const mesesAnos = [];
+  const datasLabels = [];
 
   for (let i = 0; i < datasUnicas.length; i++) {
     const data = datasUnicas[i];
@@ -11,8 +11,8 @@ const calcularHeadcount = (datasAtivos, datasInativos, totalFuncionarios) => {
 
     const mesAno = `${mes}/${ano}`;
 
-    if (!mesesAnos.includes(mesAno)) {
-      mesesAnos.push(mesAno);
+    if (!datasLabels.includes(mesAno)) {
+      datasLabels.push(mesAno);
 
       const dataAtual = new Date(parseInt(ano), parseInt(mes) - 1, 1);
       const dataProximoMes = new Date(parseInt(ano), parseInt(mes), 1);
@@ -29,11 +29,14 @@ const calcularHeadcount = (datasAtivos, datasInativos, totalFuncionarios) => {
       }
 
       const turnover = (totalFuncionarios - contadorAtivos) / totalFuncionarios;
-      headcount.push(turnover);
+      headcount.push({
+        headcount: turnover,
+        data: mesAno
+      });
     }
   }
 
   return headcount;
-}
+};
 
 export { calcularHeadcount }
