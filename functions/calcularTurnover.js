@@ -13,9 +13,23 @@ const calcularTurnover = (datasAtivos, datasInativos, totalFuncionarios) => {
     });
   }
 
-  turnovers.sort((a, b) => new Date(a.data) - new Date(b.data));
+  if (datasInativos.length === 0) {
+    const ativosTotais = datasAtivos.length;
+    const turnoverSemInativos = 0 / ((ativosTotais + totalFuncionarios) / 2);
+    turnovers.push({
+      turnover: turnoverSemInativos,
+      data: null
+    });
+  }
+
+  turnovers.sort((a, b) => {
+    if (a.data === null) return 1;
+    if (b.data === null) return -1;
+    return new Date(a.data) - new Date(b.data);
+  });
 
   return turnovers;
 };
+
 
 export { calcularTurnover };
