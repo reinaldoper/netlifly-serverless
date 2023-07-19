@@ -9,6 +9,7 @@ Back-end projeto serverless
 - `git@github.com:reinaldoper/netlifly-serverless.git`
 ## Na raiz do projeto
 - `npm install`
+- - `ter uma conta no Netlifly`
 ## Link da API
 - `https://master--creative-alpaca-c36ba7.netlify.app/{getTurnover}`
 ## Tecnologias utilizadas
